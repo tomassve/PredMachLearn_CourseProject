@@ -1,6 +1,6 @@
 PredMachLearn
 =============
 
-Practical Machine Learning - Peer Assessments 1
+Practical Machine Learning - Course Project
 by Tomas
 
