@@ -266,26 +266,39 @@ use.training   &lt;- use.training[index, ]</code></pre>
 <div id="regression-trees" class="section level5">
 <h5>Regression Trees</h5>
 <pre class="r"><code>set.seed(125)
-sysTime&lt;-system.time(model1 &lt;- train(use.training$classe ~ .,method=&quot;rpart&quot;,
-                                     data=subset(use.training, select=-c(classe))))
-elapsedTime&lt;-rbind(&quot;RegressionTree&quot;=sysTime)</code></pre>
+sysTime1&lt;-system.time(model1 &lt;- train(use.training$classe ~ .,method=&quot;rpart&quot;,
+                                     data=subset(use.training, select=-c(classe))))</code></pre>
 </div>
 <div id="random-forest" class="section level5">
 <h5>Random forest</h5>
 <pre class="r"><code>set.seed(125)
-sysTime&lt;-system.time(model2 &lt;- train(use.training$classe ~ .,method=&quot;rf&quot;,
-                                     data=subset(use.training, select=-c(classe))))</code></pre>
+sysTime2&lt;-system.time(model2 &lt;- train(use.training$classe ~ .,method=&quot;rf&quot;,
+                                      data=subset(use.training, select=-c(classe))))</code></pre>
 <pre><code>## Loading required package: randomForest
 ## randomForest 4.6-10
 ## Type rfNews() to see new features/changes/bug fixes.</code></pre>
-<pre class="r"><code>elapsedTime&lt;-rbind(elapsedTime, &quot;RandomForest&quot;=sysTime)</code></pre>
 </div>
 <div id="generalized-boosted-regression-models" class="section level5">
 <h5>Generalized boosted regression models</h5>
 <pre class="r"><code>set.seed(125)
-sysTime&lt;-system.time(model3 &lt;- train(use.training$classe ~ .,method=&quot;gbm&quot;, 
-                                     subset(use.training, select=-c(classe)), verbose=FALSE))
-elapsedTime&lt;-rbind(elapsedTime, &quot;GeneralizedBoostedReg&quot;=sysTime)</code></pre>
+sysTime3&lt;-system.time(model3 &lt;- train(use.training$classe ~ .,method=&quot;gbm&quot;, 
+                                     subset(use.training, select=-c(classe)), verbose=FALSE))</code></pre>
+<pre><code>## Loading required package: gbm
+## Loading required package: survival
+## Loading required package: splines
+## 
+## Attaching package: 'survival'
+## 
+## The following object is masked from 'package:caret':
+## 
+##     cluster
+## 
+## Loading required package: parallel
+## Loaded gbm 2.1
+## Loading required package: plyr</code></pre>
+<pre class="r"><code>elapsedTime&lt;-rbind(&quot;RegressionTree&quot;=sysTime1,
+                   &quot;RandomForest&quot;=sysTime2,
+                   &quot;GeneralizedBoostedReg&quot;=sysTime3)</code></pre>
 </div>
 </div>
 </div>
@@ -363,7 +376,7 @@ RandomForest
 GeneralizedBoostedReg
 </td>
    <td align="right"> 
-0.9741
+0.9747
 </td>
    <td align="right"> 
 0.9602
@@ -372,147 +385,27 @@ GeneralizedBoostedReg
 </tbody>
 </table>
 
-<pre class="r"><code>knitr::kable(confusionMatrix(validationPrediction2, use.validation$classe)$table, 
-             format = &quot;html&quot;, caption = &quot;Confusion Matrix for Random Forest&quot;)</code></pre>
-<table>
-<caption>
-Confusion Matrix for Random Forest
-</caption>
- <thead>
-  <tr>
-   <th align="left">   </th>
-   <th align="right"> 
-A
-</th>
-   <th align="right"> 
-B
-</th>
-   <th align="right"> 
-C
-</th>
-   <th align="right"> 
-D
-</th>
-   <th align="right"> 
-E
-</th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td align="left"> 
-A
-</td>
-   <td align="right"> 
-558
-</td>
-   <td align="right"> 
-3
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-  </tr>
-  <tr>
-   <td align="left"> 
-B
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-375
-</td>
-   <td align="right"> 
-1
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-  </tr>
-  <tr>
-   <td align="left"> 
-C
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-1
-</td>
-   <td align="right"> 
-341
-</td>
-   <td align="right"> 
-7
-</td>
-   <td align="right"> 
-0
-</td>
-  </tr>
-  <tr>
-   <td align="left"> 
-D
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-314
-</td>
-   <td align="right"> 
-2
-</td>
-  </tr>
-  <tr>
-   <td align="left"> 
-E
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-0
-</td>
-   <td align="right"> 
-358
-</td>
-  </tr>
-</tbody>
-</table>
 
+<pre class="r"><code>confusionMatrix(validationPrediction2, use.validation$classe)$table </code></pre>
+<pre><code>          Reference
+Prediction   A   B   C   D   E
+         A 558   3   0   0   0
+         B   0 375   1   0   0
+         C   0   1 341   7   0
+         D   0   0   0 314   2
+         E   0   0   0   0 358</code></pre>
 <pre class="r"><code>confusionMatrix(validationPrediction2, use.validation$classe)$overall[1:4]</code></pre>
-<pre><code> Accuracy         Kappa AccuracyLower AccuracyUpper 
-   0.9929        0.9910        0.9880        0.9961 </code></pre>
+<pre><code>     Accuracy         Kappa AccuracyLower AccuracyUpper 
+       0.9929        0.9910        0.9880        0.9961 </code></pre>
 </div>
 </div>
 <div id="discussions-and-conclusions" class="section level3">
 <h3>Discussions and Conclusions</h3>
-<p>The Random Forest performed best. It has an accuracy of 0.993 on the independent validation set. The 95% CI is 0.988 to 0.996. The model is so good that it will most likely correctly classify all 20 samples in the supplied test set.</p>
+<p>The Random Forest performed best. It has an accuracy of 0.993 on the independent validation set. The 95% CI is 0.988 to 0.996. The out-of-sample error is expected to be about 1%.</p>
+<p>The model is so good that it will most likely correctly classify all 20 samples in the supplied test set.</p>
 <div id="test-set" class="section level4">
 <h4>Test set</h4>
-<p>Result are save to disk and not disclosed.</p>
+<p>Result are saved to disk and not disclosed.</p>
 <pre class="r"><code>testResults&lt;-predict(model2, subset(use.testing, select = -c(problem_id)))
 save(testResults, file=&quot;testResults&quot;)</code></pre>
 </div>
